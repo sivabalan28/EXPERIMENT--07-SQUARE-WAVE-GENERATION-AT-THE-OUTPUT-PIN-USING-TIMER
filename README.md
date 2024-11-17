@@ -1,6 +1,5 @@
 # EXPERIMENT--05-SQUARE-WAVE-GENERATION-AT-THE-OUTPUT-PIN-USING-TIMER
-## NAME : SIVABALAN S
-## REGISTER NO. : 212222240100
+
 ### Aim:
 To generate a PWM wave at the timer pin output and  simuate it on  proteus using an virtual oscilloscope  
 
@@ -18,7 +17,7 @@ The following diagram shows you how the ARR value affects the period (frequency)
 STM32 Timers – PWM Output Channels
 
 Each Capture/Compare channel is built around a capture/compare register (including a shadow register), an input stage for capture (with a digital filter, multiplexing, and Prescaler) and an output stage (with comparator and output control). The output stage generates an intermediate waveform which is then used for reference: OCxRef (active high). The polarity acts at the end of the chain.
-<img height=10% width=50% src="https://github.com/vasanthkumarch/EXPERIMENT--07-SQUARE-WAVE-GENERATION-AT-THE-OUTPUT-PIN-USING-TIMER/assets/36288975/87457b57-4311-440b-8cbe-a9d78db4335a">
+![image](https://github.com/user-attachments/assets/6fe6b81c-b3cc-41e5-88a5-3527aa04485a)
 
 STM32 Timers In PWM Mode
 
@@ -36,17 +35,14 @@ In various applications, you’ll be in need to generate a PWM signal with a spe
 The PWM period (1/FPWM) is defined by the following parameters: ARR value, the Prescaler value, and the internal clock itself which drives the timer module FCLK. The formula down below is to be used for calculating the FPWM for the output. You can set the clock you’re using, the Prescaler, and solve for the ARR value in order to control the FPWM and get what you want.
 
 STM32 PWM Frequency Formula - STM32 PWM Frequency Equation
-![image](https://github.com/vasanthkumarch/EXPERIMENT--07-SQUARE-WAVE-GENERATION-AT-THE-OUTPUT-PIN-USING-TIMER/assets/36288975/aca8a20e-9b99-40c1-bada-f31accaa2ae9)
 
 STM32 PWM Duty Cycle
 
 In normal settings, assuming you’re using the timer module in PWM mode and generating PWM signal in edge-aligned mode up-counting configuration. The duty cycle percentage is controlled by changing the value of the CCRx register. And the duty cycle equals (CCRx/ARR) [%].
-![image](https://github.com/vasanthkumarch/EXPERIMENT--07-SQUARE-WAVE-GENERATION-AT-THE-OUTPUT-PIN-USING-TIMER/assets/36288975/58ce0807-331e-49f7-bc8d-373f82592a92)
-
-
 
 ## Procedure:
 Step1: Open CubeMX & Create New Project
+
 
 Step2: Choose The Target MCU & Double-Click Its Name select the target to be programmed  as shown below and click on next 
 
@@ -62,89 +58,88 @@ Step6: Set The System Clock To Be 72MHz
 
 Step7: Name & Generate The Project Initialization Code For CubeIDE or The IDE You’re Using
 
+
+
 Step8.  Creating Proteus project and running the simulation
 We are now at the last part of step by step guide on how to simulate STM32 project in Proteus.
 
-Step9. Create a new Proteus project and place STM32F40xx i.e. the same MCU for which the project was created in STM32Cube IDE. 
-14. After creation of the circuit as per requirement as shown below 
+Step9. Create a new Proteus project and place STM32F40xx i.e. the same MCU for which the project was created in STM32Cube IDE.  After creation of the circuit as per requirement as shown below 
 
 Step10. Double click on the the MCU part to open settings. Next to the Program File option, give full path to the Hex file generated using STM32Cube IDE. Then set the external crystal frequency to 8M (i.e. 8 MHz). Click OK to save the changes.
 
  
-Step14. click on debug and simulate using simulation as shown below 
+Step11. click on debug and simulate using simulation as shown below 
+
+ 
+
 
 ## STM 32 CUBE PROGRAM :
-```c
+```java
 #include "main.h"
 
 TIM_HandleTypeDef htim2;
-
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
-
 int main(void)
 {
   HAL_Init();
   SystemClock_Config();
-
   MX_GPIO_Init();
   MX_TIM2_Init();
-  HAL_TIM_Base_Start(&htim2);
-  HAL_TIM_PWM_Init(&htim2);
-  HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+HAL_TIM_Base_Start(&htim2);
+HAL_TIM_PWM_Init(&htim2);
+HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+
   while (1)
   {
-  }
 
+  }
 }
+  
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 25;
+  RCC_OscInitStruct.PLL.PLLN = 168;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
 }
-
 static void MX_TIM2_Init(void)
 {
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
+
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 0;
+  htim2.Init.Prescaler = 84;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 1000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
   {
     Error_Handler();
@@ -169,6 +164,9 @@ static void MX_TIM2_Init(void)
 
 static void MX_GPIO_Init(void)
 {
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
 }
@@ -179,50 +177,56 @@ void Error_Handler(void)
   while (1)
   {
   }
-  
 }
 
 #ifdef  USE_FULL_ASSERT
-
 void assert_failed(uint8_t *file, uint32_t line)
 {
 }
+#endif
 ```
-## Output screen shots of proteus  :
- 
- <img height=5% width=50% src="https://github.com/user-attachments/assets/c10d815a-d494-45a8-9174-d7db653fab85">
 
+
+
+
+## Output screen shots of proteus  :
+SIVABALAN S(212222240100)
+![image](https://github.com/user-attachments/assets/618a0743-8eba-46a0-bf44-6763f89b8b87)
+![image](https://github.com/user-attachments/assets/67018a4f-5e60-477e-9f9e-1fb3b02229dc)
+![image](https://github.com/user-attachments/assets/8f8d49e2-f4d2-44b2-ab64-b6ff97f1ce9e)
+![image](https://github.com/user-attachments/assets/a45c6386-54e0-4ec0-a15d-028d2e068ede)
+
+ 
  ## CIRCUIT DIAGRAM (EXPORT THE GRAPHICS TO PDF AND ADD THE SCREEN SHOT HERE): 
-<img height=5% width=50% src="https://github.com/user-attachments/assets/423b0d51-e314-490e-ade7-3ea13f24ff99">
+ ![image](https://github.com/user-attachments/assets/33528ff8-930f-47fa-9c60-37d8bf414b07)
 
 
 ## DUTY CYCLE AND FREQUENCY CALCULATION 
 FOR PULSE AT 500
-<img height=5% width=50% src="https://github.com/user-attachments/assets/635802d7-b841-4846-a0dd-6c13fae4f3ca">
 
-TON = 2ms
-TOFF=2ms
-TOTAL TIME = 4ms
-FREQUENCY = 1/4 = 250Hz 
-
+TON = 4
+TOFF= 4
+TOTAL TIME = 8
+FREQUENCY = 1/8
 
 FOR PULSE AT 700
-<img height=5% width=50% src="https://github.com/user-attachments/assets/a3179701-36a2-4441-a1d2-6914642e1422">
 
-TON = 3ms
-TOFF= 1ms
-TOTAL TIME = 4ms
-FREQUENCY = 1/4 = 250Hz 
+TON = 5.6
+TOFF=2.4
+TOTAL TIME = 8.0
+FREQUENCY = 1/8
 
 
 FOR PULSE AT 900
-<img height=5% width=50% src="https://github.com/user-attachments/assets/41966022-c24f-4ad5-98d6-020539e41833">
 
-TON = 3.5ms
-TOFF= 0.5ms
-TOTAL TIME = 4ms 
-FREQUENCY = 1/4 = 250Hz
-
+TON = 7.2
+TOFF= 0.8
+TOTAL TIME = 8
+FREQUENCY = 1/8 
 
 ## Result :
-A PWM Signal is generated using the following frequency and various duty cycles are simulated 
+A PWM Signal is generated using the following frequency and various duty cycles are simulated.
+
+
+
+
